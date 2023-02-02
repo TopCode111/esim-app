@@ -1,0 +1,24 @@
+{% extends "account/base.html" %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Sign Out" %}{% endblock %}
+
+{% block content %}
+  <main>
+    <div class="container m-fluid">
+      <div class="page-wrapper flex flex-dir-col justify-center align-center">
+        
+        <h1 class="page-title">ログアウト</h1>
+        <p class="action-text primary-input-texting">ログアウトしますか？</p>
+        <form class="login" method="post" action="{% url 'account_logout' %}">
+          {% csrf_token %}
+          {% if redirect_field_value %}
+          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+          {% endif %}
+          <button class='login-btn primary-input-texting' type="submit">ログアウト</button>
+        </form>
+          
+      </div>
+    </div>
+  </main>
+{% endblock %}

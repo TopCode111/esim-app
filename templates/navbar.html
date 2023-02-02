@@ -1,0 +1,40 @@
+{% load cart_template_tags %}
+{% load category_template %}
+<header>
+  <div class="container">
+      <h1 class="brand"><a href="/">eSIM</a></h1>
+      <div class="menu flex justify-between">
+          <div class="col flex">
+              <div class="custom-select">
+                <i class="fa-solid fa-caret-down"></i>
+                <p class="cats">eSIMプラン</p>
+              
+              </div>
+              <div class="search-bar">
+                <form class="form-inline search-form" method="get" action="{% url 'core:advanced_search' %}">
+                  <div class="search-icon"><i class="fas fa-search"></i>
+                  <input type="search" class="search" placeholder="フリーワード検索" aria-label="Search" id="search_scalero" name="keyword">
+                  </div>
+                  <ul class="search-suggestion">
+                  </ul>
+                </form>                
+              </div>
+              
+          </div>
+          <div class="sp mob-menu"><i class="fa-solid fa-bars"></i></div>
+          
+          <div class="col mob-col">
+            <ul class="nav-lists">
+              {% if request.user.is_authenticated %}
+                <li class="nav-list"><a href="{% url 'account_logout' %}" class="nav-link">ログアウト</a></li>                  
+                <li class="nav-list"><a href="#" class="nav-link">マイページ</a></li>
+              {% else %}
+                <li class="nav-list"><a href="{% url 'account_login' %}" class="nav-link">ログイン</a></li>
+                <li class="nav-list"><a href="{% url 'account_signup' %}" class="nav-link">新規登録</a></li>
+                
+              {% endif %}
+            </ul>
+          </div>
+      </div>
+  </div>
+</header>

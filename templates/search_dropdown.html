@@ -1,0 +1,18 @@
+{% load search_highlight %}
+<li class="item sticky">
+     <a href="{% url 'core:advanced_search' %}" class="all-result"><span class="keyword"><strong>{{ keyword }}</strong>のすべての結果を見る</span></a>
+ </li>
+
+{% for item in results.items %}
+    <li class="item">
+        <a href="{{ item.get_absolute_url }}">
+           
+            <div class="headline">{{ item.title|highlight:keyword }}</div>
+            <div class="footer">
+                <div class="footer-item"></div>
+                <!--<div class="footer-item">Created on {{ item.publication_date| date:'Y-m-d' }}</div>-->
+            </div>
+        </a>
+    </li>
+{% endfor %}
+ 

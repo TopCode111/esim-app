@@ -1,0 +1,232 @@
+header{
+    background-image: linear-gradient( 145deg, #fff 10%, var(--orange) 30%,  var(--orange) 100% );
+    padding-top: 30px;
+    padding-bottom: 30px;
+    .container{
+        position: relative;
+    }
+
+    .brand{
+        a{
+            color: var(--orange);
+            font-size: 65px;
+            font-weight: normal;
+
+        }
+    }
+
+    .menu{
+        margin-top: 20px;
+
+        .cats{
+            border: 0;
+            font-size: 20px;
+            white-space: nowrap;
+            &:focus{
+                outline: none;
+            }
+            option{
+                color: var(--orange);
+                font-size: 20px;
+                line-height: 20px;
+            }
+        }
+
+        .search-bar{
+            display: flex;
+            align-items: center;
+            background-color: #fff;
+            margin-left: 10px;
+            padding-left: 20px;
+            padding-right: 20px;
+            border-top-right-radius: 25px;
+            border-bottom-right-radius: 25px;
+
+            
+            input{
+                width: 400px;
+                margin-left: 10px;
+                padding-left: 10px;
+                padding-right: 10px;
+                display: block;
+                height: 100%;
+                border: 0;
+                color: var(--orange);
+                font-size: 20px;
+                &::placeholder{
+                    color: var(--orange);
+                    font-size: 20px;
+                    line-height: 20px;
+                }
+
+                &:focus{
+                    outline: none;
+                }
+            }
+        }
+
+        .nav-lists{
+            display: flex;
+            align-items: center;
+            .nav-list{
+                a{
+                    display: inline-block;
+                    background-color: #fff;
+                    color: var(--orange);
+                    padding: 5px 20px;
+                    margin-left: 10px;
+                }
+                
+                &:first-child{
+                    a{
+                        border-top-left-radius: 25px;
+                        border-bottom-left-radius: 25px;
+                    }
+                }
+                
+                &:last-child{
+                    a{
+                        border-top-right-radius: 25px;
+                        border-bottom-right-radius: 25px;
+                    }
+                }
+            }
+        }
+    }
+
+    .float--menu{
+        position: absolute;
+        top: calc( 100% + 30px );
+        left: -1000%;
+        background-color: #fff;
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-top: 80px;
+        min-height: 800px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        min-width: 250px;
+        transition: 0.5s linear all;
+        
+        &.active{
+            transition: 0.5s linear all;
+            left: 0;
+        }
+
+        .float--list{
+            position: relative;
+            width: 100%;
+            
+            .float--link{
+                color: var(--orange);
+                font-size: 18px;
+                i{
+                    margin-left: 30px;
+                }
+            }
+
+            .sub-float--menu{
+                position: absolute;
+                top: -80px;
+                left: -1000%;
+                width: 400px;
+                height: 800px;
+                background-color: #fff;
+                border-left: 1px solid var(--orange);
+                padding-left: 20px;
+                padding-right: 20px;
+                padding-top: 80px;
+                &.active{
+                    left: 100%;
+                }
+
+                .float--list{
+                    width: 100%;
+
+                    .float--link{
+                        display: flex;
+                        width: 100%;
+                        justify-content: space-between;
+                        align-items: center;
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+@media (max-width: 767px){
+    header{
+        background-image: none;
+        //background-image: linear-gradient( 180deg, #fff 20%, var(--orange) 40%,  var(--orange) 100% );
+        padding-top: 0px;
+        padding-bottom: 0px;
+        .container{
+            padding-left: 0;
+            padding-right: 0;
+        }
+        .brand{
+            padding-top: 15px;
+            padding-bottom: 15px;
+            background-image: linear-gradient(180deg, #fff 40%, var(--orange) 100%, var(--orange) 100%);
+            a{
+                font-size: 35px;
+                line-height: 40px;
+            }
+            text-align: center;
+        }
+        .menu{
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            margin-top: -1px;
+            display: grid;
+            grid-template-columns: auto auto;
+            grid-template-rows: auto auto;
+            align-items: center;
+            background-color: var(--orange);
+            .search-bar{
+            
+                input{
+                    width: 100%;
+                }
+            }
+
+            .mob-menu{
+                color: #fff;
+                font-size: 30px;
+                margin-left: 10px;
+            }
+
+            .mob-col{
+                grid-column: 1/3;
+                .nav-lists{
+                    height: 0;
+                    transition: 0.2s all linear;
+                    .nav-list{
+                        display: none;
+                    }
+                    &.active{
+                        padding-top: 40px;
+                        padding-bottom: 40px;
+                        display: flex;
+                        height: 100%;
+                        align-items: center;
+                        justify-content: center;
+                        flex-direction: column;
+                        .nav-list{
+                            display: block;
+                            a{
+                                background-color: transparent;
+                                color: #fff;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

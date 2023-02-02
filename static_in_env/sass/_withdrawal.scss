@@ -1,0 +1,22 @@
+.alert{
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    .i{
+        font-size: 60px;
+        color: var(--orange);
+    }
+}
+
+.withdrawal-container-title{
+    font-size: 28px;
+    color: var(--orange);
+    text-align: center;
+    line-height: 1.4em;
+}
+
+@media ( max-width: 767px ){
+    .withdrawal-container-title{
+        font-size: 15px;
+    }
+}

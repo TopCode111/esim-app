@@ -1,0 +1,193 @@
+.payment-box-title.change{
+    color: #fff;
+    font-size: 30px;
+    line-height: 1.4em;
+    background-color: var(--orange);
+    max-width: 1430px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 50px;
+    margin-top: 50px;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+}
+
+.payment-box{
+    margin-left: auto;
+    margin-right: auto;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+
+    .payment-box-title{
+        color: #fff;
+        font-size: 30px;
+        line-height: 1.4em;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    form.payment-form{
+        width: 60%;
+        margin-left: auto;
+        margin-right: auto;
+
+        .group-wrap{
+            display: flex;
+            justify-content: space-between;
+
+            .pay-btn{
+                width: 200px;
+                height: 65px;
+                border-radius: 50px;
+                border: 1px solid #fff;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: #fff;
+                font-weight: 300;
+            }
+        }
+
+        .field-group{
+            background-color: #fff;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            &.third-width{
+                width: 60%;
+            }
+            label{
+                font-size: 22px;
+                flex-shrink: 0;
+            }
+            
+            .field-input{
+                display: flex;
+                justify-content: center;
+                width: 100%;
+                font-size: 34px;
+                color: var(--orange);
+                text-align: center;
+                border: 0;
+
+
+                &:focus{
+                    outline: none;
+                }
+            }
+
+            select{
+                border: none;
+                option{
+                    font-size: 30px;
+                    color: var(--orange);
+                }
+            }
+        }
+    }
+
+    .arrow-down{
+        .fa{
+            font-size: 70px;
+            color: #fff;
+        }
+    }
+
+    .all-products{
+        font-size: 30px;
+        color: var(--orange);
+        background-color: #fff;
+        border-radius: 6px;
+        padding: 30px 120px;
+        display: inline-block;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+}
+
+.box-title{
+    font-size: 40px;
+    color: var(--orange);
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+@media (max-width: 767px){
+    .payment-box-title.change{
+        color: var(--orange);
+        font-size: 15px;
+        line-height: 1.4em;
+        background-color: transparent;
+        margin-left: auto;
+        margin-right: auto;
+        padding-top: 0px;
+        margin-top: 50px;
+    }
+
+    .payment-box{
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 50px;
+
+        .payment-box-title{
+            font-size: 18px;
+        }
+    
+        form.payment-form{
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+
+            .field-group{
+                flex-direction: column;
+                background-color: transparent;
+                align-items: flex-start;
+                margin-bottom: 10px;
+                label{
+                    color: #fff;
+                    text-align: left;
+                    font-size: 14px;
+                }
+                
+                .field-input{
+                    height: 45px;
+                    border-radius: 6px;
+                    font-size: 18px;
+
+                    select{
+                        height: 45px;
+                        width: 60px;
+                    }
+                }
+            }
+
+            .group-wrap{
+                flex-direction: column;
+                .pay-btn{
+                    width: 100%;
+                    border-radius: 6px;
+                    border-width: 2px;
+                    font-size: 15px;
+                }
+            }
+        }
+
+        .all-products{
+            font-size: 15px;
+            padding: 0;
+            width: 100%;
+            height: 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
+    .box-title{
+        font-size: 15px;
+    }
+}

@@ -1,0 +1,46 @@
+{% extends "account/base.html" %}
+{% load i18n %}
+{% load account socialaccount %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+<main id="page-login">
+  <div class="container m-fluid">
+      <div class="page-wrapper flex flex-dir-col justify-center align-center">
+          <h1 class="page-title">ログイン</h1>
+
+          <div class="login-box">
+            {% get_providers as socialaccount_providers %}
+            {% if socialaccount_providers %}
+            <div class="sign-with-google">
+              <h3 class="sign-with-google--title primary-input-texting">グーグルアカウントでログイン</h3>
+              
+              <ul class="socialaccount_providers">
+                {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+              </ul>
+            </div>
+            {% include "socialaccount/snippets/login_extra.html" %}
+            
+            {% endif %}
+            <div class="login-form">
+                <h2 class="login-form--title primary-input-texting">メールアドレスとパスワードでログイン</h2>
+                <form class="login" method="POST" action="{% url 'account_login' %}">
+                  {% csrf_token %}
+                  {{ form|crispy }}
+                  
+                  <button type="submit" class="login-btn primary-input-texting">ログインする</button>
+                </form>
+
+                <p class="action-text primary-input-texting">パスワードを忘れた場合は<a href="{% url 'account_reset_password' %}" >こちら</a></p>
+                <p class="action-text primary-input-texting">新規登録は<a href="{{ signup_url }}">こちら</a></p>
+            </div>
+
+          </div>
+
+      </div>
+  </div>
+</main>
+
+{% endblock %}
