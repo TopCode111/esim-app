@@ -1,0 +1,258 @@
+{% extends "base1.html" %}
+{% load category_template %}
+{% load static %}
+{% block content %}      
+<div class="container-fluid">
+    <!-- start page title -->
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+                <h4 class="page-title">プラン管理</h4>
+                
+            </div>
+        </div>
+    </div>     
+    <!-- end page title -->
+    <!-- start content -->
+    <div class="row">
+        <div class="col-xl-12 col-lg-12">
+            <button data-toggle="modal" data-target="#addmodal" class="btn btn-primary btn-sm mb-1"><i class="mdi mdi-plus">&nbsp;&nbsp;プラン追加</i></button>
+            <div class="modal fade" id="addmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4>プラン追加</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <form action="{%url 'dashboard:planmanage'%}" method="POST" enctype="multipart/form-data">   
+                        <div class="modal-body">
+                            {% csrf_token %}                                                    
+                            <div class="form-group">
+                                <label>プラン名</label>
+                                <input type="text" class="form-control" name="plan_name" placeholder="プラン1" required>                                                        
+                            </div>
+                            <div class="form-group">
+                                <label>プランID</label>
+                                <input type="number" class="form-control" name="plan_id" placeholder="1" required>                                                        
+                            </div>
+                            <div class="form-group">
+                                <label>国家</label>
+                                <select class="form-control" name="country">
+                                    {% for code, name in countries %}
+                                    <option value="{{ code }}">{{ name }}</option>
+                                    {% endfor %}
+                                </select>                                                  
+                            </div>
+                            <div class="form-group">
+                                <label>ネットワーク対象国</label>
+                                <select class="form-control" name="coverage_area">
+                                    {% for code, name in countries %}
+                                    <option value="{{ code }}">{{ name }}</option>
+                                    {% endfor %}
+                                </select>                                                  
+                            </div>
+                            <div class="form-group">
+                                <label>データ容量</label>
+                                <select class="form-control"  name="plan_data">                                    
+                                    {%with obj|get_plandata_list as categories%}
+                                    {%for obj in categories %}
+                                    <option value="{{obj.0}}">{{obj.1}}</option>
+                                    {%endfor%}
+                                    {%endwith%}
+                                </select>                                                   
+                            </div>
+                            <div class="form-group">
+                                <label>価格</label>
+                                <input type="number" class="form-control" name="plan_price" placeholder="3000" required>                                                        
+                            </div>
+                            <div class="form-group">
+                                <label>ネットワーク事業者</label>
+                                <input type="text" class="form-control" name="plan_provider" >                                                        
+                            </div>
+                            <div class="form-group">
+                                <label>ネットワークの種類</label>
+                                <input type="text" class="form-control" name="plan_network" >                                                        
+                            </div>
+                            <div class="form-group">
+                                <label>StripeID</label>
+                                <input type="text" class="form-control" name="stripe_price_id" >                                                        
+                            </div> 
+                            <div class="form-group">
+                                <label>概要</label>
+                                <textarea type="text" class="form-control" name="summary" ></textarea>                                                    
+                            </div>                   
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">キャンセル</button>
+                        <button type="submit" class="btn btn-primary">追加</button>
+                        </div>
+                    </form>
+                </div>
+                </div>
+            </div>
+            <div class="card shadow">
+                <div class="card-body userlist">
+                    <table class="table table-hover table-scrollable">
+                        <thead class="card-header py-3">                                
+                            <th>No</th>
+                            <th>プラン名</th> 
+                            <th>プランID</th>                                                           
+                            <th>国家</th>
+                            <th>データ</th>    
+                            <th>価格</th>
+                            <th>ネットワーク事業者</th>
+                            <th>ネットワークの種類</th>
+                            <th width="10%">メニュー</th>
+                                
+                        </thead>
+                        <tbody>
+                            {% for obj in plans %}
+                            <tr data-index="{{obj.id}}" class="list-item">
+                                <td>{{ forloop.counter}}</td>
+                                <td>{{ obj.name }}</td>
+                                <td>{{ obj.planID }}</td>
+                                <td>{{ obj.country.name }}</td>
+                                <td>{{ obj.plan_data|get_plandata }}</td>
+                                <td>{{ obj.plan_price }}</td>
+                                <td>{{ obj.plan_provider }}</td>
+                                <td>{{ obj.plan_network }}</td>                                         
+                                <td><button class="dropdown btn btn-primary btn-sm" data-toggle="dropdown"><i class="mdi mdi-cursor-pointer"></i></button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <button data-toggle="modal" data-target="#editmodal_{{ obj.id }}" href="{% url 'dashboard:user-detail' pk=user.id %}" class="dropdown-item" ><i class="mdi mdi-tooltip-edit"></i>編集</button>
+                                    <button data-toggle="modal" data-target="#deletemodal_{{ obj.id }}" class="dropdown-item"><i class="mdi mdi-delete"></i>削除</button>
+                                </div>
+                                </td>
+                                <div class="modal fade" id="editmodal_{{ obj.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4>プラン情報変更</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                        <form action="{% url 'dashboard:plan_update' pk=obj.id %}" method="POST" enctype="multipart/form-data">   
+                                            <div class="modal-body">
+                                                {% csrf_token %}
+                                                <div class="form-group">
+                                                    <label>プラン名</label>
+                                                    <input type="text" class="form-control" name="plan_name" value="{{ obj.name }}">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>プランID</label>
+                                                    <input type="text" class="form-control" name="plan_id" value="{{ obj.id }}">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>国家</label>
+                                                    <select class="form-control" name="country">
+                                                        <option value="{{ obj.country.code }}">{{ obj.country.name }}</option>
+                                                        {% for code, name in countries %}
+                                                        <option value="{{ code }}">{{ name }}</option>
+                                                        {% endfor %}
+                                                    </select>                                                  
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>ネットワーク対象国</label>
+                                                    <select class="form-control" name="coverage_area">
+                                                        <option value="{{ obj.coverage_area.code }}">{{ obj.coverage_area.name }}</option>
+                                                        {% for code, name in countries %}
+                                                        <option value="{{ code }}">{{ name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>価格</label>
+                                                    <input type="number" class="form-control" name="plan_price" value="{{ obj.plan_price }}">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>データ</label>
+                                                    <input type="text" class="form-control" name="plan_data" value="{{ obj.plan_data }}">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>ネットワーク事業者</label>
+                                                    <input type="text" class="form-control" name="plan_provider" value="{{ obj.plan_provider }}">                                                        
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>ネットワークの種類</label>
+                                                    <input type="text" class="form-control" name="plan_network" value="{{ obj.plan_network }}">                                                        
+                                                </div>                                                     
+                                                <div class="form-group">
+                                                    <label>StripeID</label>
+                                                    <input type="text" class="form-control" name="stripe_price_id" value="{%if  obj.stripe_price_id%}{{ obj.stripe_price_id }}{%endif%}">                                                        
+                                                </div> 
+                                                <div class="form-group">
+                                                    <label>概要</label>
+                                                    <textarea class="form-control" name="summary">{%if  obj.summary%}{{ obj.summary }}{%endif%}</textarea>                                             
+                                                </div>                               
+                                            </div>                                     
+                                            <div class="modal-footer">
+                                            <button type="button" class="btn btn-danger" data-dismiss="modal">キャンセル</button>
+                                            <button type="submit" class="btn btn-primary">変更する</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    </div>
+                                </div>
+                                <div class="modal fade" id="deletemodal_{{ obj.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4>【{{ obj.name }}】を本当に削除しますか?</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                        <form action="{% url 'dashboard:deletplan' pk=obj.id %}" method="POST" enctype="multipart/form-data">   
+                                            {% csrf_token %}                                     
+                                            <div class="modal-footer">
+                                            <button type="button" class="btn btn-danger" data-dismiss="modal">キャンセル</button>
+                                            <button type="submit" class="btn btn-primary">はい</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    </div>
+                                </div>
+                                
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end content -->
+</div> <!-- container -->
+
+{% endblock content %}
+{% block scripts %}
+<script>
+    
+    let inactiveto = button => {
+        var user_id = button.getAttribute('data-id');        
+        $('.modal').modal('hide');
+        $.ajax({
+            url : '{% url 'dashboard:inactive' %}',
+            data:{
+                user_id: user_id,
+                csrfmiddlewaretoken: "{{ csrf_token }}"
+            },
+            type:'POST',
+            success:function(data){
+                var data = JSON.parse(data);
+                console.log(data.active_status);
+                if(data.active_status == 1){
+                    $('.list-item[data-index="' + user_id + '"]').find('td:eq(2)').html('有効');
+                }else{
+                    $('.list-item[data-index="' + user_id + '"]').find('td:eq(2)').html('停止中');
+                }      
+                
+            }
+        });
+    }
+    
+</script>
+{% endblock %}

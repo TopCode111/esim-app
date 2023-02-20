@@ -1,0 +1,308 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8" data="text/plain">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>eSIM</title>
+    {% block extra_head %}
+    {% endblock %}
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="{% static 'images/logo_mark.png'%}">    
+    <!-- third party css -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.16/dist/summernote.min.css" rel="stylesheet">
+    <link href="{% static 'libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css' %}" rel="stylesheet" type="text/css" />
+    <!-- third party css end -->
+    <!-- Plugins css -->
+    <link href="{% static 'libs/dropzone/min/dropzone.min.css' %}" rel="stylesheet" type="text/css" />
+    <!-- App css -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" id="bs-default-stylesheet">
+    <link href="{% static 'css/app.min.css' %}" rel="stylesheet" id="app-default-stylesheet">
+    <link href="{% static 'css/bootstrap-dark.min.css' %}" rel="stylesheet" id="bs-dark-stylesheet">
+    <link href="{% static 'css/app-dark.min.css' %}" rel="stylesheet" id="app-dark-stylesheet">
+    <!-- icons -->
+    <link href="{% static 'css/icons.min.css' %}" rel="stylesheet" type="text/css" />
+
+    <!-- Global site tag (gtag.js) - Google Analytics 
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L3YCJ8SXS9"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-L3YCJ8SXS9');
+    </script>-->
+</head>
+
+<body class="loading">
+    <!-- Begin page -->
+    <div id="wrapper">
+        <!-- ========== Left Sidebar Start ========== -->
+        <div class="left-side-menu">
+
+        <!-- LOGO -->
+        <div class="logo-box">
+            <a href="/" class="logo logo-dark text-center">
+                <span class="logo-sm">
+                    <img src="{%static 'images/logo.svg'%}" alt="" height="24">
+                    <!-- <span class="logo-lg-text-light">Minton</span> -->
+                </span>
+                <span class="logo-lg">
+                    <img src="{%static 'images/logo.svg'%}" alt="" height="50">
+                    <!-- <span class="logo-lg-text-light">M</span> -->
+                </span>
+            </a>
+
+            <a href="/" class="logo logo-light text-center">
+                <span class="logo-sm">
+                    <img src="{%static 'images/logo.svg'%}" alt="" height="24">
+                </span>
+                <span class="logo-lg">
+                    <img src="{%static 'images/logo.svg'%}" alt="" height="50">
+                </span>
+            </a>
+        </div>
+
+        <div class="h-100" data-simplebar>
+
+            <!-- User box -->
+            <div class="user-box text-center">
+                <img src="" alt="user-img" title="Mat Helme"
+                    class="rounded-circle avatar-md">
+                <div class="dropdown">
+                    {% if request.user.is_authenticated %}
+                    <a href="javascript: void(0);" class="text-reset dropdown-toggle h5 mt-2 mb-1 d-block"
+                        data-toggle="dropdown">{{request.user.username}}</a>
+                    <div class="dropdown-menu user-pro-dropdown">
+
+                        <!-- item-->
+                        <a href="{% url 'core:profile'%}" class="dropdown-item notify-item">
+                            <i class="fe-user mr-1"></i>
+                            <span>プロフィール</span>
+                        </a>
+
+                        <!-- item-->
+                        <a href="{% url 'core:profile'%}" class="dropdown-item notify-item">
+                            <i class="fe-settings mr-1"></i>
+                            <span>設定</span>
+                        </a>                      
+
+                        <!-- item-->
+                        <a href="{% url 'account_logout'%}" class="dropdown-item notify-item">
+                            <i class="fe-log-out mr-1"></i>
+                            <span>ログアウト</span>
+                        </a>
+
+                    </div>
+                    {% endif %}
+                </div>                
+            </div>
+
+            <!--- Sidemenu -->
+            <div id="sidebar-menu">
+
+                <ul id="side-menu">        
+                    <li>
+                        <a href="#sidebarDashboards" data-toggle="collapse" class="waves-effect">
+                            <i class="ri-dashboard-line"></i>
+                            <span>ダッシュボード</span>
+                            <span class="menu-arrow"></span>
+                        </a>
+                        <div class="collapse" id="sidebarDashboards">
+                            <ul class="nav-second-level">
+                                <li>
+                                    <a href="#"><i class="ri-article-line"></i> ターミネートAPI連携</a>
+                                </li>
+                                <li>
+                                    <a href="{%url 'dashboard:planmanage'%}"><i class="ri-article-line"></i> プラン管理</a>
+                                </li>                      
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="#sidebarAccount" data-toggle="collapse" class="waves-effect">
+                            <i class="ri-user-line"></i>
+                            <span>アカウント</span>
+                            <span class="menu-arrow"></span>
+                        </a>
+                        <div class="collapse" id="sidebarAccount">
+                            <ul class="nav-second-level">
+                                <li>
+                                    <a href="{% url 'core:profile'%}"><i class="ri-account-circle-line"></i> アカウント</a>
+                                </li>                                
+                                <li>
+                                    <a href="{%url 'dashboard:orderhistory'%}"><i class="ri-exchange-cny-line"></i> 購入履歴</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'dashboard:usermanage'%}"><i class="ri-exchange-cny-line"></i> ユーザー管理</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>                                    
+                </ul>
+
+            </div>
+            <!-- End Sidebar -->
+
+            <div class="clearfix"></div>
+
+        </div>
+        <!-- Sidebar -left -->
+
+        </div>
+        <!-- Left Sidebar End -->
+
+        <!-- ============================================================== -->
+        <!-- Start Page Content here -->
+        <!-- ============================================================== -->
+
+        <div class="content-page">
+        <div class="content">
+            <!-- Topbar Start -->
+            <div class="navbar-custom">
+            <div class="container-fluid">
+
+                <ul class="list-unstyled topnav-menu float-right mb-0">
+
+                    <li class="dropdown d-none d-lg-inline-block">
+                        <a class="nav-link dropdown-toggle arrow-none waves-effect waves-light" data-toggle="fullscreen" href="#">
+                            <i class="fe-maximize noti-icon"></i>
+                        </a>
+                    </li>                         
+                    
+                    <li class="dropdown notification-list topbar-dropdown">
+                        {% if request.user.is_authenticated %}
+                        <a class="nav-link dropdown-toggle nav-user mr-0 waves-effect waves-light" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                            
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
+                            <!-- item-->
+                            <a href="{% url 'core:profile'%}" class="dropdown-item notify-item">
+                                <i class="ri-account-circle-line"></i>
+                                <span>プロフィール</span>
+                            </a>
+
+                            <!-- item-->
+                            <a href="{% url 'core:profile'%}" class="dropdown-item notify-item">
+                                <i class="ri-settings-3-line"></i>
+                                <span>設定</span>
+                            </a>
+
+                            <div class="dropdown-divider"></div>
+
+                            <!-- item-->
+                            <a href="{% url 'account_logout'%}" class="dropdown-item notify-item">
+                                <i class="ri-logout-box-line"></i>
+                                <span>ログアウト</span>
+                            </a>
+
+                        </div>
+                        {% endif %}
+                    </li>
+                </ul>
+
+                <!-- LOGO -->
+                <div class="logo-box">
+                    <a href="index.html" class="logo logo-dark text-center">
+                        <span class="logo-sm">
+                            <img src="" alt="" height="24">
+                            <!-- <span class="logo-lg-text-light">Minton</span> -->
+                        </span>
+                        <span class="logo-lg">
+                            <img src="" alt="" height="20">
+                            <!-- <span class="logo-lg-text-light">M</span> -->
+                        </span>
+                    </a>
+
+                    <a href="index.html" class="logo logo-light text-center">
+                        <span class="logo-sm">
+                            <img src="" alt="" height="24">
+                        </span>
+                        <span class="logo-lg">
+                            <img src="" alt="" height="20">
+                        </span>
+                    </a>
+                </div>
+
+                <ul class="list-unstyled topnav-menu topnav-menu-left m-0">
+                    <li>
+                        <button class="button-menu-mobile waves-effect waves-light">
+                            <i class="fe-menu"></i>
+                        </button>
+                    </li>
+
+                    <li>
+                        <!-- Mobile menu toggle (Horizontal Layout)-->
+                        <a class="navbar-toggle nav-link" data-toggle="collapse" data-target="#topnav-menu-content">
+                            <div class="lines">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </a>
+                        <!-- End mobile menu toggle-->
+                    </li>
+                    
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+            </div>
+            <!-- ============================================================== -->
+            <!-- Start Page Content here -->
+            <!-- ============================================================== -->
+            {% comment %} {% if messages %}
+            <div class="messages">                
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" id="close" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                {% endfor %}                
+            </div>
+            {% endif %} {% endcomment %}
+            {% block content %}
+            {% endblock content %}
+            <!-- End Page content -->
+            
+            
+            <!-- end Topbar -->
+        </div>
+        </div>        
+    </div>
+    
+    <script type="text/javascript" src="{% static 'js/vendor.min.js' %}"></script>    
+    <script type="text/javascript" src="{% static 'js/pages/jquery.todo.js' %}"></script>
+    <!-- third party js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+    <script src="{% static 'libs/datatables.net/js/jquery.dataTables.min.js'%}"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.20/sorting/datetime-moment.js"></script>
+    <script src="{% static 'libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js'%}"></script>
+    <script src="{% static 'libs/datatables.net-responsive/js/dataTables.responsive.min.js'%}"></script>    
+    
+    <!-- third party js ends -->
+    <!-- Plugins js-->
+    <script src="{% static 'libs/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js' %}"></script>
+    <script src="{% static 'libs/dropzone/min/dropzone.min.js' %}"></script>
+    <!-- init js -->
+    <script type="text/javascript" src="{% static 'js/pages/form-wizard.init.js' %}"></script>
+    <script src="{% static 'js/pages/form-fileuploads.init.js' %}"></script>
+    <!-- App js -->
+    <script type="text/javascript" src="{% static 'js/app.min.js' %}"></script>
+    {% block scripts %}
+    {% endblock %}
+    {% block extra_js %}
+    {% endblock %}
+    {% csrf_token %}
+    <script>
+        
+        $('document').ready(function(){
+    
+        })      
+        
+    </script>
+    
+</body>
+</html>

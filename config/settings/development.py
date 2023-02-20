@@ -14,6 +14,9 @@ DATABASES = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = 'email_log'
+EMAIL_PORT = 587 
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
 
 STRIPE_PUBLIC_KEY = config('STRIPE_TEST_PUBLIC_KEY')
 STRIPE_SECRET_KEY = config('STRIPE_TEST_SECRET_KEY')

@@ -58,4 +58,8 @@ STRIPE_PUBLIC_KEY = config('STRIPE_LIVE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = config('STRIPE_LIVE_SECRET_KEY')
 
 EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
+EMAIL_HOST = 'smtp.gmail.com' 
+EMAIL_PORT = 587 
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'youremail@gmail.com' 
 SENDGRID_API_KEY = config('SENDGRID_API_KEY')

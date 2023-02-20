@@ -3,6 +3,7 @@ from django.conf import settings
 from django.db import models
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404, reverse, redirect
+from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
 from django.utils.text import slugify
 import itertools
@@ -23,62 +24,58 @@ class Categories(models.Model):
     def __str__(self):
         return self.name
 
-
-class Plan(models.Model):
-    name = models.CharField(max_length=100)
-    price = models.PositiveIntegerField()
-    country = CountryField()
-    capercity = models.PositiveIntegerField()
-    period = models.PositiveIntegerField()
-    summary = models.TextField(blank=True, null=True)    
-    publication_date = models.DateTimeField(auto_now_add=True)    
+PlanDataChoice = (1, "300MB"), (2, "1GB"), (3, "無制限")
+PlanProviderChoice = (1, "3G"), (2, "LTE"), (3, "4G"), (4, "5G")
+class Plan(models.Model):    
+    planID = models.PositiveIntegerField(unique=True)
+    name = models.CharField(max_length=100,blank=True, null=True)
+    country = CountryField(blank=True, null=True)
+    coverage_area = CountryField(blank=True, null=True)
+    plan_data = models.PositiveIntegerField(choices=PlanDataChoice,blank=True, null=True)
+    plan_price = models.PositiveIntegerField(blank=True, null=True)
+    plan_provider = models.CharField(max_length=50,blank=True, null=True)
+    plan_network = models.CharField(max_length=50,blank=True, null=True)
+    plan_tethering = models.BooleanField(default=False)
+    plan_cell = models.BooleanField(default=False)    
+    summary = models.TextField(blank=True, null=True)
+    stripe_price_id = models.CharField(_(u'Stripe Products'),max_length=255, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.title
+        return self.name
 
     def get_absolute_url(self):
-        return reverse("core:product", kwargs={
-            'slug': self.slug
+        return reverse("core:plan", kwargs={
+            'pk': self.id
         })
-
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            self._generate_slug()
-        super().save(*args, **kwargs)
 
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     ref_code = models.CharField(max_length=50, blank=True, null=True)
     plan = models.ForeignKey(Plan,on_delete=models.CASCADE)
-    start_date = models.DateTimeField(auto_now_add=True)
-    ordered_date = models.DateTimeField()
+    activateDate = models.DateField()
+    endDate = models.DateField()
+    ordered_date = models.DateTimeField(auto_now_add=True)
     ordered = models.BooleanField(default=False)
     received = models.BooleanField(default=False)
-
+    period = models.PositiveIntegerField(blank=True, null=True)
     '''
-    1. Item added to cart
-    2. Adding a billing address
-    (Failed checkout)
-    3. Payment
-    (Preprocessing, processing, packaging etc.)
-    4. Received
+    
     '''
 
     def __str__(self):
-        return self.user.username
+        return self.plan.name
+    
+    def get_absolute_url(self):
+        return reverse("core:order", kwargs={
+            'pk': self.id
+        })
 
-    def get_total(self):
-        total = 0
-        for order_item in self.items.all():
-            total += order_item.get_final_price()
-        return total
-
-
-class Payment(models.Model):
-    stripe_charge_id = models.CharField(max_length=50)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True)
-    amount = models.FloatField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+class PaymentHistory(models.Model):
+    checkout_session = models.CharField(_(u'Stripe Subscriptions'),max_length=255, blank=True, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True)    
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.stipe_charge_id
@@ -88,7 +85,27 @@ class Blog(models.Model):
     image = models.ImageField(blank=True, null=True)
     title = models.CharField(max_length=50)
     content = models.TextField()
+    slug = models.SlugField(max_length=50, unique=True, null=False, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    def get_absolute_url(self):
+        return reverse("article", args=[self.slug])
+    
+    def _generate_slug(self):
+        max_length = self._meta.get_field('slug').max_length
+        value = self.name
+        slug_candidate = slug_original = slugify(value, allow_unicode=True)
+        for i in itertools.count(1):
+            if not Blog.objects.filter(slug=slug_candidate).exists():
+                break
+            slug_candidate = '{}-{}'.format(slug_original, i)
+
+        self.slug = slug_candidate
+
+    def save(self, *args, **kwargs):   
+        if not self.pk:
+            self._generate_slug()     
+        super().save(*args, **kwargs)
     
 
 def userprofile_receiver(sender, instance, created, *args, **kwargs):

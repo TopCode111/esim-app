@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanizelib %}
+{% block content %}      
+<!-- Page header starts -->
+<div class="container-fluid">
+    <div class="page-header-wrap overflow-hidden parent-floating mt-5 pt-5">
+        
+    </div>
+</div>
+<div class="container page-container price-page">
+    <!-- start page title -->
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+                <h4 class="page-title"></h4>
+                
+            </div>
+        </div>
+    </div>
+    <!-- end page title -->
+    <div class="row">
+        <div class=" col-xl-12 col-lg-12">
+            <div class="row">
+                <h1 class="title text-center text-dark">料金プラン</h1>
+                {%for plan in plans %}
+                <div class="col-lg-6  mb-5">
+                    <div class="card shadow">
+                        {%if paymenthistory.plan == plan %}
+                        <div class="card-header bg-red radius-tlr-10 color-white">                        
+                        {%else%}
+                        <div class="card-header bg-blue radius-tlr-10 color-white">
+                        {%endif%}
+                            <span>{{plan.name}}</span>
+                        </div>
+                        <div class="card-body">
+                            
+                            <strong>¥{{plan.plan_price|intcomma}}</strong>
+                            <p>7日間無料</p>
+                            <p><small>{{plan.summary}}</small></p>
+                            
+                        </div>
+                        <div class="card-footer d-flex justify-content-center">
+                            <button class="btn c-blue text-center purchase" data-id="{{plan.id}}" >お申込み</button>                            
+                        </div>
+                    </div>
+                </div>
+                {%endfor%}
+            </div>
+        </div>
+    </div>
+
+</div> <!-- container -->
+
+{% endblock content %}
+{% block scripts %}
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        console.log("Sanity check!");
+        let stripe;
+        fetch("/accounts/config/")
+        .then((result) => { return result.json(); })
+        .then((data) => {
+            stripe = Stripe(data.publicKey);
+        });
+        
+        $('body').on('click','.purchase', function () {
+            let plan_id = $(this).attr('data-id');
+            if(!plan_id){
+                return
+            }
+            fetch("/accounts/create-checkout-session/?plan_id="+plan_id)
+            .then((result) => { return result.json();})
+            .then((data) => {
+            if(data.email){
+                alert("メールアドレスをご記入ください！");
+                window.location = '/accounts/profile/';
+            }
+            if(data.error){
+                alert("stripe接続状態を確認してください！");
+                window.location = '/accounts/payment/';
+            }
+            if(data.success){
+                window.location = '/accounts/payment/success?plan_id='+plan_id;
+            }else{
+                return stripe.redirectToCheckout({sessionId: data.sessionId})
+            }
+            })
+            .then((res) => {      
+            console.log(res);
+            });
+        })
+
+        $('body').on('click','.cancel', function () {
+            let checkout_session = $(this).attr('data-id');
+            if(!checkout_session){
+                return
+            }
+            fetch("/accounts/cancel-checkout-session/?checkout_session_id="+checkout_session)
+            .then((result) => { return result.json();})
+            .then((data) => {
+                window.location = '/accounts/payment/';            
+            })
+            .then((res) => {      
+                console.log(res);
+            });
+        })
+    </script>
+{% endblock %}

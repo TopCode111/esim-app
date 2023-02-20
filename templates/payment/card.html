@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% block extra_head %}
+<style>
+    .field {
+      background: transparent;
+      font-weight: 300;
+      border: 0;
+      color: #31325F;
+      outline: none;
+      flex: 1;
+      padding-right: 10px;
+      padding-left: 10px;
+      cursor: text;
+    }
+    
+    span.brand {
+      width: 30px;
+    }
+    
+</style>
+{% endblock extra_head %} 
+{% load static %}
+{% block content %}      
+<div class="container-fluid">
+    <!-- start page title -->
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+                <h4 class="page-title">現在のクレジットカード</h4>
+                
+            </div>
+        </div>
+    </div>     
+    <!-- end page title -->
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card ribbon-box">
+                <div class="card-body">
+                    <div class="ribbon-two ribbon-two-primary">
+                        <span>カード</span>
+                    </div>
+                    {% if card %}
+                    <div class="payment-box radius-orange-box current-card-form">      
+                        <div class="payment-form">
+                            <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" name="use_default_card" id="use_default_card">
+                            <label class="payment-box-context text-center" for="use_default_card">保存されたカード:
+                                <br>**** **** **** {{ card.last4 }}<br> 
+                            <span>有効期限: {{ card.exp_month }}/{{ card.exp_year }}</span></label>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="payment-box radius-orange-box new-card-form">
+                        <form action="." method="POST" class="payment-form" id="stripe-form">
+                            {% csrf_token %}
+                            <div class="field-group">
+                                <label for="phone">カード番号</label>
+                                <div id="card-number-element" class="field"></div>
+                                <span class="brand"><i class="pf pf-credit-card" id="brand-icon"></i></span>
+                            </div>
+                            
+                            <div class="field-group third-width">
+                                <label for="name">有効期限</label>
+                                <div id="card-expiry-element" class="field"></div>
+                            </div>
+                            <div class="group-wrap flex">
+                                <div class="field-group third-width">
+                                    <label for="password">セキュリティコード</label>
+                                    <div id="card-cvc-element" class="field"></div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">{% if card %}カード情報を更新する{%else%}カード情報を保存する{% endif %}</button>
+                            </div>
+                            <div id="card-errors" role="alert"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div> <!-- container -->
+
+{% endblock content %}
+{% block extra_js %}
+<script src="https://js.stripe.com/v3/"></script>
+<script nonce="">
+    // Create a Stripe client.
+    var stripe = Stripe("{{STRIPE_PUBLIC_KEY}}");
+    
+    // Create an instance of Elements.
+    var elements = stripe.elements();
+
+    // Custom styling can be passed to options when creating an Element.
+    // (Note that this demo uses a wider set of styles than the guide below.)
+    var style = {
+        base: {
+        iconColor: '#666EE8',
+        color: '#31325F',
+        lineHeight: '40px',
+        fontWeight: 300,
+        fontFamily: 'Helvetica Neue',
+        fontSize: '18px',
+    
+        '::placeholder': {
+            color: '#CFD7E0',
+        },
+        },
+        invalid: {
+        color: "#fa755a",
+        iconColor: "#fa755a",
+        },
+    };
+
+    // Create an instance of the card Element.
+    var cardNumberElement = elements.create('cardNumber', {
+        style: style
+    });
+
+    // Add an instance of the card Element into the `card-element` <div>.
+    cardNumberElement.mount('#card-number-element');
+
+    var cardExpiryElement = elements.create('cardExpiry', {
+        style: style
+    });
+    cardExpiryElement.mount('#card-expiry-element');
+    
+    var cardCvcElement = elements.create('cardCvc', {
+        style: style
+    });
+    cardCvcElement.mount('#card-cvc-element');
+    
+    var cardBrandToPfClass = {
+        'visa': 'pf-visa',
+        'mastercard': 'pf-mastercard',
+        'amex': 'pf-american-express',
+        'discover': 'pf-discover',
+        'diners': 'pf-diners',
+        'jcb': 'pf-jcb',
+        'unknown': 'pf-credit-card',
+    }
+    
+    function setBrandIcon(brand) {
+        var brandIconElement = document.getElementById('brand-icon');
+        var pfClass = 'pf-credit-card';
+        if (brand in cardBrandToPfClass) {
+        pfClass = cardBrandToPfClass[brand];
+        }
+        for (var i = brandIconElement.classList.length - 1; i >= 0; i--) {
+        brandIconElement.classList.remove(brandIconElement.classList[i]);
+        }
+        brandIconElement.classList.add('pf');
+        brandIconElement.classList.add(pfClass);
+    }
+    
+    // Handle real-time validation errors from the card Element.
+    cardNumberElement.addEventListener("change", function (event) {
+        var displayError = document.getElementById("card-errors");
+        if (event.error) {
+        displayError.textContent = event.error.message;
+        } else {
+        displayError.textContent = "";
+        }
+    });
+    
+    // Handle form submission.
+    var form = document.getElementById("stripe-form");
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        
+        stripe.createToken(cardNumberElement).then(function (result) {
+        if (result.error) {
+            // Inform the user if there was an error.
+            var errorElement = document.getElementById("card-errors");
+            errorElement.textContent = result.error.message;
+        } else {
+            // Send the token to your server.
+            stripeTokenHandler(result.token);
+        }
+        });
+    });
+
+    // Submit the form with the token ID.
+    function stripeTokenHandler(token) {
+        // Insert the token ID into the form so it gets submitted to the server
+        var form = document.getElementById("stripe-form");
+        var hiddenInput = document.createElement("input");
+        hiddenInput.setAttribute("type", "hidden");
+        hiddenInput.setAttribute("name", "stripeToken");
+        hiddenInput.setAttribute("value", token.id);
+        form.appendChild(hiddenInput);
+
+        // Submit the form
+        form.submit();
+    }
+</script>
+
+{% endblock extra_js %}

@@ -1,0 +1,175 @@
+{% extends "base1.html" %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}      
+<div class="container-fluid">
+    <!-- start page title -->
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+                <h4 class="page-title">ユーザー情報</h4>
+                
+            </div>
+        </div>
+    </div>     
+    <!-- end page title -->
+    <!-- start content -->
+    <div class="row">
+        <div class="col-lg-4 col-xl-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="text-left mt-3">
+                        <h4 class="font-13 text-uppercase">個人情報 :</h4>
+                        <div class="table-responsive">
+                            <table class="table table-borderless table-sm">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">名前 :</th>
+                                        <td class="text-muted">{{user.username}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">メールアドレス :</th>
+                                        <td class="text-muted">{{user.email}}</td>
+                                    </tr>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>                    
+                </div>
+            </div> <!-- end card-box -->
+        </div> <!-- end col-->
+
+        <div class="col-lg-8 col-xl-8">
+            <div class="card">
+                <div class="card-body">
+                    <ul class="nav nav-pills navtab-bg">
+                        <li class="nav-item">
+                            <a href="#about-me" data-toggle="tab" aria-expanded="true" class="nav-link active ml-0">
+                                <i class="mdi mdi-face-profile mr-1"></i>プロフィール
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#settings_email" data-toggle="tab" aria-expanded="false" class="nav-link">
+                                <i class="mdi mdi-email-check-outline mr-1"></i>メールアドレス
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#settings_pw" data-toggle="tab" aria-expanded="false" class="nav-link">
+                                <i class="mdi mdi-eye-check-outline mr-1"></i>パスワード変更
+                            </a>
+                        </li>                                               
+                    </ul>
+
+                    <div class="tab-content">                        
+                        <div class="tab-pane show active" id="about-me">                                                   
+                            <form action="{%url 'core:update_profile'%}" method="POST" enctype="multipart/form-data">                                
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="firstname">名前</label>
+                                            <input type="text" class="form-control" name="username" id="username" value="{%if user.username%}{{user.username}}{%endif%}">
+                                        </div>
+                                    </div>
+                                </div>                                
+                                <div class="text-right">
+                                    <button type="submit" class="btn btn-success waves-effect waves-light mt-2"><i class="mdi mdi-content-save"></i> 保存する</button>
+                                </div>
+                            </form>
+                            
+                        </div>
+                        <!-- end プロフィール-->
+
+                        <div class="tab-pane" id="settings_email">
+                            
+                            <h5 class="mb-3 text-uppercase bg-light p-2"><i class="mdi mdi-account-circle mr-1"></i>メールアドレス設定</h5>
+                            <p>メールアドレスでログインする場合や、当選通知を受け取る場合に必要です。</p>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="firstname">現在</label>
+                                        <p>{{user.email}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">                        
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="firstname">メールアドレスを変更する</label>
+                                        <input type="email" class="form-control mb-2" name="new_email" id="new_email" placeholder="メールアドレスを入力" required>
+                                        <input type="email" class="form-control mb-2" name="confirm_email" id="confirm_email" placeholder="メールアドレスを再度入力" required>
+                                        <p>新しいメールアドレスに認証リンクが送信され、認証するとメールアドレスが変更されます。</p>
+                                    </div>
+                                </div> 
+                                <!-- end col -->
+                            </div> <!-- end row -->                                
+                            <div class="text-right">
+                                <button type="button" class="btn btn-success waves-effect waves-light mt-2" onclick="change_email();"><i class="mdi mdi-content-save"></i> 保存する</button>
+                            </div>
+                            
+                        </div>
+                        <!-- end メールアドレス-->
+
+                        <div class="tab-pane" id="settings_pw">
+                            
+                            <h5 class="mb-3 text-uppercase bg-light p-2"><i class="mdi mdi-account-circle mr-1"></i>パスワード変更</h5>
+                            <p>新しいパスワードを設定することができます。</p>
+                            <form method="post" action="{%url 'core:change_password'%}" class="form-group mb-0 editable-input-panel">
+                                {% csrf_token %}
+                                <div class="row">                        
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            {{ pw_form.new_password1|as_crispy_field }}
+                                            {{ pw_form.new_password2|as_crispy_field }}
+                                            
+                                        </div>
+                                    </div> 
+                                    <!-- end col -->
+                                </div> <!-- end row -->                                
+                                <div class="text-right">
+                                    <button type="submit" class="btn btn-success waves-effect waves-light mt-2"><i class="mdi mdi-content-save"></i> 保存する</button>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- end パスワード変更-->
+
+                    </div> <!-- end tab-content -->
+                </div>
+            </div> <!-- end card-->
+
+        </div> <!-- end col -->
+    </div>
+    <!-- end content -->
+</div> <!-- container -->
+
+{% endblock content %}
+{% block scripts %}
+<!-- Magnific Popup-->
+<script src="{% static 'libs/magnific-popup/jquery.magnific-popup.min.js'%}"></script>
+<script>
+
+    let change_email = button =>{
+        var new_email = $("#new_email").val();
+        var confirm_email = $("#confirm_email").val();
+        if(new_email != confirm_email){
+            alert("メールアドレスが同じではありません！")
+        }else{
+            $.ajax({
+                url : '{% url 'core:change_email' %}',
+                data:{
+                    new_email: new_email,                    
+                    csrfmiddlewaretoken: "{{ csrf_token }}"
+                },
+                type:'POST',
+                success:function(data){
+                    console.log(data);         
+                    window.location.replace("/accounts/profile/");   
+                }
+            });
+        }
+    }    
+    
+</script>
+{% endblock %}
